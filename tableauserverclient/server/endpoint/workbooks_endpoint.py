@@ -7,6 +7,7 @@ from ...models.tag_item import TagItem
 from ...models.job_item import JobItem
 from ...filesys_helpers import to_filename
 
+import sys
 import os
 import logging
 import copy
@@ -265,3 +266,11 @@ class Workbooks(Endpoint):
             new_workbook = WorkbookItem.from_response(server_response.content, self.parent_srv.namespace)[0]
             logger.info('Published {0} (ID: {1})'.format(filename, new_workbook.id))
             return new_workbook
+
+    @api(version="2.3")
+    def get_degradations(self, workbookId, productVersion, workbookName):
+        sys.stderr.write("Fetching degradations for workbook {0}...".format(workbookName))
+        url = "{0}/sites/{1}/workbooks/{2}/degrade_info?productVersion={3}".format(self.parent_srv.baseurl, self.parent_srv.site_id, workbookId, productVersion)
+        server_response = self.get_request(url);
+        sys.stderr.write("Finished.\n")
+        return server_response
